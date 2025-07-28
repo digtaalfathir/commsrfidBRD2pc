@@ -4,22 +4,28 @@ const HOST = "192.168.1.201";
 const PORT = 9090;
 
 function parseTagData(hexString) {
-  const HEADER = "ea001700a3000";
+  const HEADER = "ea001700a3000c";
+  // console.log(`[→] Parsing tag data: ${hexString}`);
   if (!hexString.startsWith(HEADER)) return null;
 
-  const controlByte = 2; // misal "ce"
-  const headerLen = HEADER.length + controlByte; // 13 + 2 = 15 char
-  const epcLen = 24; // 12 byte = 24 char hex
+  const payload = hexString.slice(HEADER.length + 2); // +2 untuk controlByte
+  // console.log(`[→] Payload: ${payload}`);
 
-  const epcStart = headerLen;
-  const epc = hexString.slice(epcStart, epcStart + epcLen);
+  // Cari posisi "34000"
+  const antennaIndex = payload.indexOf("34000");
+  if (antennaIndex === -1 || antennaIndex + 5 >= payload.length) {
+    console.warn("[!] Antenna pattern not found or incomplete.");
+    return null;
+  }
 
-  const antennaField = hexString.slice(epcStart + epcLen, epcStart + epcLen + 6);
-  if (!antennaField.startsWith("34000")) return null;
-
-  const antennaChar = antennaField[5];
+  const epc = payload.slice(0, antennaIndex);
+  const antennaChar = payload.charAt(antennaIndex + 5);
   const antenna = parseInt(antennaChar, 10);
-  if (isNaN(antenna)) return null;
+
+  if (isNaN(antenna)) {
+    console.warn("[!] Failed to parse antenna number.");
+    return null;
+  }
 
   return {
     epc: epc.toUpperCase(),
@@ -47,7 +53,7 @@ client.on("data", (data) => {
   const packets = hex.split("ea00").filter((p) => p.length > 0);
   for (const pkt of packets) {
     const fullPkt = "ea00" + pkt;
-    console.log(`[←] Received packet: ${fullPkt}`);
+    // console.log(`[←] Received packet: ${fullPkt}`);
     const parsed = parseTagData(fullPkt);
     if (parsed) {
       console.log(`[←] Tag detected: EPC=${parsed.epc}, Antenna=${parsed.antenna}`);
