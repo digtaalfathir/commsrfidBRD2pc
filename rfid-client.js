@@ -8,7 +8,7 @@ function parseTagData(hexString) {
   // console.log(`[→] Parsing tag data: ${hexString}`);
   if (!hexString.startsWith(HEADER)) return null;
 
-  const payload = hexString.slice(HEADER.length + 2); // +2 untuk controlByte
+  const payload = hexString.slice(HEADER.length); // langsung setelah HEADER
   // console.log(`[→] Payload: ${payload}`);
 
   // Cari posisi "34000"
