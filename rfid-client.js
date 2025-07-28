@@ -34,9 +34,9 @@ function parseTagData(hexString) {
 }
 
 function sendScanCommand(socket) {
-  const scanCommand = Buffer.from("ff059cc6000000", "hex");
+  const scanCommand = Buffer.from("ea0004015701b9", "hex");
   socket.write(scanCommand);
-  console.log("[→] Sent scan command: ff059cc6000000");
+  console.log("[→] Sent scan command: ff02249f0000");
 }
 
 const client = new net.Socket();
