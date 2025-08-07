@@ -4,7 +4,7 @@ const axios = require("axios");
 const HOST = "192.168.1.201";
 const PORT = 9090;
 
-const READER_ID = "FX96006A6F01";
+const READER_ID = "C-001";
 const FIXED_ANTENNA = "1";
 const POST_URL = "http://product.suite.stechoq-j.com/api/v1/warehouse-management/counting-log-rfid";
 
