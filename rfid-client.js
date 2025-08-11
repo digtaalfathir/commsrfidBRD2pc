@@ -1,5 +1,6 @@
 const net = require("net");
 const axios = require("axios");
+const keySender = require("node-key-sender");
 
 const HOST = "192.168.1.201";
 const PORT = 9090;
@@ -14,6 +15,12 @@ let isConnected = false;
 // === Data Buffering ===
 let tagBuffer = new Set();
 let debounceTimer = null;
+
+// === Fungsi untuk mengirim teks sebagai keyboard ===
+function typeAsKeyboard(text) {
+  // Mengirim karakter satu per satu seperti keyboard
+  keySender.sendText(text).then(() => keySender.sendKey("enter"));
+}
 
 // === Fungsi Parsing Tag ===
 function parseTagData(hexString) {
@@ -119,6 +126,9 @@ client.on("data", (data) => {
       if (!tagBuffer.has(epc)) {
         console.log(`Tag detected: EPC=${epc}, Antenna=${parsed.antenna}`);
         tagBuffer.add(epc);
+
+        // --- KETIKKAN TAG ke layar seperti keyboard ---
+        typeAsKeyboard(epc);
       }
 
       // Reset timeout jika ada tag baru
